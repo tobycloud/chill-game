@@ -1,0 +1,79 @@
+[gd_scene load_steps=8 format=3 uid="uid://bkg21jep2pd6h"]
+
+[ext_resource type="Script" path="res://scripts/Grass.gd" id="1_qkp6k"]
+[ext_resource type="PackedScene" uid="uid://bht7k3xp5a20d" path="res://scenes/Grass.tscn" id="2_obfo3"]
+[ext_resource type="Shader" path="res://shader/world.gdshader" id="3_vuniq"]
+[ext_resource type="PackedScene" uid="uid://d1yls4w7kaumv" path="res://scenes/player.tscn" id="5_eddou"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ohrdv"]
+shader = ExtResource("3_vuniq")
+shader_parameter/skyColor = Color(0.529412, 0.807843, 0.980392, 1)
+
+[sub_resource type="Sky" id="Sky_veu7h"]
+sky_material = SubResource("ShaderMaterial_ohrdv")
+
+[sub_resource type="Environment" id="Environment_u1wmn"]
+background_mode = 2
+sky = SubResource("Sky_veu7h")
+ambient_light_source = 3
+reflected_light_source = 2
+tonemap_mode = 2
+ssr_enabled = true
+ssao_enabled = true
+ssil_enabled = true
+sdfgi_enabled = true
+glow_enabled = true
+fog_light_color = Color(1, 1, 1, 1)
+fog_density = 0.001
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.03
+volumetric_fog_emission = Color(0.529412, 0.807843, 0.980392, 1)
+
+[node name="world" type="Node3D"]
+
+[node name="Grass" type="Node3D" parent="."]
+script = ExtResource("1_qkp6k")
+
+[node name="Grass1" parent="Grass" instance=ExtResource("2_obfo3")]
+
+[node name="Grass2" parent="Grass" instance=ExtResource("2_obfo3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9.91046)
+
+[node name="Grass3" parent="Grass" instance=ExtResource("2_obfo3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.91994, 0, -9.91046)
+
+[node name="Grass4" parent="Grass" instance=ExtResource("2_obfo3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.91994, 0, -0.0373859)
+
+[node name="Grass5" parent="Grass" instance=ExtResource("2_obfo3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.0059, 0, -0.0373859)
+
+[node name="Grass6" parent="Grass" instance=ExtResource("2_obfo3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.0059, 0, -10.0215)
+
+[node name="Grass7" parent="Grass" instance=ExtResource("2_obfo3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.0059, 0, 9.91569)
+
+[node name="Grass8" parent="Grass" instance=ExtResource("2_obfo3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.90952, 0, 9.91569)
+
+[node name="Grass9" parent="Grass" instance=ExtResource("2_obfo3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0772085, 0, 9.91569)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_u1wmn")
+
+[node name="SunMoon" type="Node3D" parent="WorldEnvironment"]
+
+[node name="Sun" type="MeshInstance3D" parent="WorldEnvironment/SunMoon"]
+
+[node name="SunLight" type="DirectionalLight3D" parent="WorldEnvironment/SunMoon/Sun"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -2.4876, 0.0250812)
+
+[node name="Moon" type="MeshInstance3D" parent="WorldEnvironment/SunMoon"]
+
+[node name="MoonLight" type="DirectionalLight3D" parent="WorldEnvironment/SunMoon/Moon"]
+transform = Transform3D(1, 0, 0, 0, 1.31134e-07, 1, 0, -1, 1.31134e-07, 0, 2.50276, 0.00869632)
+shadow_enabled = true
+
+[node name="player" parent="." instance=ExtResource("5_eddou")]
