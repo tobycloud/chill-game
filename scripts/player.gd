@@ -89,7 +89,7 @@ func _physics_process(delta):
 
 func on_Esc(cam):
 	if !is_locked:
-		Input.mouse_mode = Input.MOUSE_MODE_CONFINED
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	else:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	is_locked = !is_locked
