@@ -1,7 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://bkg21jep2pd6h"]
+[gd_scene load_steps=8 format=3 uid="uid://bkg21jep2pd6h"]
 
+[ext_resource type="Script" path="res://scripts/world.gd" id="1_e0eau"]
 [ext_resource type="Script" path="res://scripts/Grass.gd" id="1_qkp6k"]
 [ext_resource type="PackedScene" uid="uid://bht7k3xp5a20d" path="res://scenes/Grass.tscn" id="2_obfo3"]
+[ext_resource type="PackedScene" uid="uid://bx48c6fkyrs4u" path="res://scenes/EscUserOption.tscn" id="5_7l732"]
 [ext_resource type="PackedScene" uid="uid://d1yls4w7kaumv" path="res://scenes/player.tscn" id="5_eddou"]
 
 [sub_resource type="Sky" id="Sky_217rn"]
@@ -23,10 +25,42 @@ volumetric_fog_density = 0.03
 volumetric_fog_emission = Color(0.529412, 0.807843, 0.980392, 1)
 
 [node name="world" type="Node3D"]
+script = ExtResource("1_e0eau")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 2.4197, 0)
+transform = Transform3D(-0.866024, -0.433016, 0.250001, 0, 0.499998, 0.866026, -0.500003, 0.749999, -0.43301, 0, 7.0309, 0)
 shadow_enabled = true
+
+[node name="wall" type="Node3D" parent="."]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="wall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 10.4178)
+use_collision = true
+size = Vector3(60, 5, 1)
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="wall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, -10.4822)
+use_collision = true
+size = Vector3(20, 5, 1)
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="wall"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -9.5, 1.4, -10.4822)
+use_collision = true
+size = Vector3(20, 5, 1)
+
+[node name="CSGBox3D4" type="CSGBox3D" parent="wall"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 9.5, 1.4, -10.4822)
+use_collision = true
+size = Vector3(20, 5, 1)
+
+[node name="CSGBox3D6" type="CSGBox3D" parent="wall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.0133, 1.4, -0.0822268)
+use_collision = true
+size = Vector3(20, 5, 1)
+
+[node name="CSGBox3D5" type="CSGBox3D" parent="wall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.9027, 1.4, -0.482228)
+size = Vector3(20, 5, 1)
 
 [node name="Grass" type="Node3D" parent="."]
 script = ExtResource("1_qkp6k")
@@ -37,3 +71,8 @@ script = ExtResource("1_qkp6k")
 environment = SubResource("Environment_u1wmn")
 
 [node name="player" parent="." instance=ExtResource("5_eddou")]
+
+[node name="EscUserOption" parent="." instance=ExtResource("5_7l732")]
+visible = false
+
+[connection signal="RTP" from="EscUserOption" to="." method="_on_esc_user_option_rtp"]

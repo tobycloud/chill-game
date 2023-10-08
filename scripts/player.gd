@@ -14,6 +14,8 @@ extends CharacterBody3D
 var SPEED = 3
 const JUMP_VELOCITY = 5
 var running = false
+var is_locked = false
+var is_locked_cam = false
 
 @export var walking_speed = 3
 @export var running_speed = 5
@@ -35,13 +37,13 @@ func _input(event):
 			first.current = false
 			third.current = true
 	if event is InputEventMouseMotion:
-		rotate_y(deg_to_rad(-event.relative.x * sens_horizontal))
-		visuals.rotate_y(deg_to_rad(event.relative.x * sens_horizontal))
-		camera_mount.rotate_x(deg_to_rad(-event.relative.y*sens_vertical))
-		
+		if !is_locked_cam:
+			rotate_y(deg_to_rad(-event.relative.x * sens_horizontal))
+			visuals.rotate_y(deg_to_rad(event.relative.x * sens_horizontal))
+			camera_mount.rotate_x(deg_to_rad(-event.relative.y*sens_vertical))
+
 
 func _physics_process(delta):
-	
 	if Input.is_action_pressed("run"):
 		SPEED = running_speed
 		running = true
@@ -62,14 +64,18 @@ func _physics_process(delta):
 	var input_dir = Input.get_vector("left", "right", "forward", "backward")
 	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	if direction:
-		if running:
-			if animation_player.current_animation != "running":
-				animation_player.play("running")
+		if !is_locked:
+			if running:
+				if animation_player.current_animation != "running":
+					animation_player.play("running")
+			else:
+				if animation_player.current_animation != "walking":
+					animation_player.play("walking");
+			visuals.look_at(position + direction)
 		else:
-			if animation_player.current_animation != "walking":
-				animation_player.play("walking")
-		
-		visuals.look_at(position + direction)
+			if animation_player.current_animation != "idle":
+					animation_player.play("idle")
+
 		
 		velocity.x = direction.x * SPEED
 		velocity.z = direction.z * SPEED
@@ -78,6 +84,14 @@ func _physics_process(delta):
 			animation_player.play("idle")
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		velocity.z = move_toward(velocity.z, 0, SPEED)
+	if !is_locked:
+		move_and_slide()
 
-	move_and_slide()
-
+func on_Esc(cam):
+	if !is_locked:
+		Input.mouse_mode = Input.MOUSE_MODE_CONFINED
+	else:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	is_locked = !is_locked
+	if cam:
+		is_locked_cam = !is_locked_cam

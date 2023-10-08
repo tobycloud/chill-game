@@ -1,0 +1,49 @@
+[gd_scene load_steps=2 format=3 uid="uid://bx48c6fkyrs4u"]
+
+[ext_resource type="Script" path="res://scripts/EscUserOption.gd" id="1_f87yh"]
+
+[node name="EscUserOption" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_f87yh")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -70.0
+offset_top = -85.0
+offset_right = 70.0
+offset_bottom = 85.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="MultiplePlayer" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Multiple Player
+Chơi mận"
+
+[node name="RTP" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Return To Play
+Quay lại trò chèo"
+
+[node name="Quit" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Quit
+Tắt cửa sổ"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/MultiplePlayer" to="." method="_on_multiple_player_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/RTP" to="." method="_on_rtp_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
