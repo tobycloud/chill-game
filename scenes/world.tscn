@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://bkg21jep2pd6h"]
+[gd_scene load_steps=9 format=3 uid="uid://bkg21jep2pd6h"]
 
 [ext_resource type="Script" path="res://scripts/world.gd" id="1_e0eau"]
 [ext_resource type="Script" path="res://scripts/Grass.gd" id="1_qkp6k"]
+[ext_resource type="PackedScene" uid="uid://d2mqyhuwus21h" path="res://scenes/Box.tscn" id="2_6ixq1"]
 [ext_resource type="PackedScene" uid="uid://bht7k3xp5a20d" path="res://scenes/Grass.tscn" id="2_obfo3"]
 [ext_resource type="PackedScene" uid="uid://bx48c6fkyrs4u" path="res://scenes/EscUserOption.tscn" id="5_7l732"]
 [ext_resource type="PackedScene" uid="uid://d1yls4w7kaumv" path="res://scenes/player.tscn" id="5_eddou"]
@@ -27,11 +28,15 @@ volumetric_fog_emission = Color(0.529412, 0.807843, 0.980392, 1)
 [node name="world" type="Node3D"]
 script = ExtResource("1_e0eau")
 
+[node name="Node3D" parent="." instance=ExtResource("2_6ixq1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0)
+
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866024, -0.433016, 0.250001, 0, 0.499998, 0.866026, -0.500003, 0.749999, -0.43301, 0, 7.0309, 0)
 shadow_enabled = true
 
 [node name="wall" type="Node3D" parent="."]
+visible = false
 
 [node name="CSGBox3D" type="CSGBox3D" parent="wall"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 10.4178)

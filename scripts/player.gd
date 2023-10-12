@@ -20,6 +20,7 @@ var is_locked_cam = false
 @export var walking_speed = 3
 @export var running_speed = 5
 
+
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
@@ -41,6 +42,8 @@ func _input(event):
 			rotate_y(deg_to_rad(-event.relative.x * sens_horizontal))
 			visuals.rotate_y(deg_to_rad(event.relative.x * sens_horizontal))
 			camera_mount.rotate_x(deg_to_rad(-event.relative.y*sens_vertical))
+			if first.current:
+				camera_mount.rotation.x = clamp(camera_mount.rotation.x, -1, 1)
 
 
 func _physics_process(delta):
@@ -58,6 +61,8 @@ func _physics_process(delta):
 	# Handle Jump.
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
+		if running:
+			velocity.y += 2 # extra velocity if running
 
 	# Get the input direction and handle the movement/deceleration.
 	# As good practice, you should replace UI actions with custom gameplay actions.

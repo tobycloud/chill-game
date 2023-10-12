@@ -3,6 +3,7 @@ extends Node3D
 @onready var esc_user_option = $EscUserOption
 
 var EscMenu = false
+var hiddenChild = []
 func _ready():
 	pass
 

@@ -66,6 +66,14 @@ esc={
 ]
 }
 
+[layer_names]
+
+3d_physics/layer_1="World"
+3d_physics/layer_2="Tree"
+3d_physics/layer_3="Item"
+3d_physics/layer_4="Player"
+3d_physics/layer_5="Enemy"
+
 [rendering]
 
 renderer/rendering_method.mobile="gl_compatibility"
