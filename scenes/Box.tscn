@@ -1,8 +1,28 @@
-[gd_scene format=3 uid="uid://d2mqyhuwus21h"]
+[gd_scene load_steps=6 format=3 uid="uid://d2mqyhuwus21h"]
+
+[ext_resource type="Script" path="res://scripts/Box.gd" id="1_64bik"]
+[ext_resource type="PackedScene" uid="uid://c0lfn0t3cx2ah" path="res://scenes/health_component.tscn" id="1_qvcs4"]
+[ext_resource type="PackedScene" uid="uid://ddn1rtmt1rcgu" path="res://scenes/hit_box_component.tscn" id="2_m1vc5"]
+[ext_resource type="Script" path="res://scripts/HealthComponent.gd" id="3_8y08t"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xtcxc"]
 
 [node name="Node3D" type="Node3D"]
+script = ExtResource("1_64bik")
+
+[node name="HealthComponent" parent="." instance=ExtResource("1_qvcs4")]
+
+[node name="HitBoxComponent" parent="." instance=ExtResource("2_m1vc5")]
+script = ExtResource("3_8y08t")
+MAX_HEALTH = 100
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HitBoxComponent"]
+transform = Transform3D(1.3, 0, 0, 0, 1.3, 0, 0, 0, 1.3, 0, 0.5, 0)
+shape = SubResource("BoxShape3D_xtcxc")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 use_collision = true
 collision_layer = 5
+
+[connection signal="area_entered" from="HitBoxComponent" to="." method="_on_hit_box_component_area_entered"]

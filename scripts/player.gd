@@ -1,11 +1,11 @@
 extends CharacterBody3D
+class_name Player
 
 @onready var third = $camera_mount/third
 @onready var first = $camera_mount/first
 @onready var camera_mount = $camera_mount
 @onready var animation_player = $visuals/mixamo_base/AnimationPlayer
 @onready var visuals = $visuals
-
 
 @export var sens_horizontal = 0.5
 @export var sens_vertical = 0.5
@@ -16,6 +16,7 @@ const JUMP_VELOCITY = 5
 var running = false
 var is_locked = false
 var is_locked_cam = false
+var was_emit_die = false
 
 @export var walking_speed = 3
 @export var running_speed = 5
@@ -42,8 +43,8 @@ func _input(event):
 			rotate_y(deg_to_rad(-event.relative.x * sens_horizontal))
 			visuals.rotate_y(deg_to_rad(event.relative.x * sens_horizontal))
 			camera_mount.rotate_x(deg_to_rad(-event.relative.y*sens_vertical))
-			if first.current:
-				camera_mount.rotation.x = clamp(camera_mount.rotation.x, -1, 1)
+			# if first.current:
+			#	camera_mount.rotation.x = clamp(camera_mount.rotation.x, -1, 1)
 
 
 func _physics_process(delta):
@@ -91,6 +92,12 @@ func _physics_process(delta):
 		velocity.z = move_toward(velocity.z, 0, SPEED)
 	if !is_locked:
 		move_and_slide()
+signal PlayerDie
+func _process(delta):
+	print(position)
+	if(global_position[1] <=-100) && !was_emit_die:
+		PlayerDie.emit()
+		was_emit_die = true
 
 func on_Esc(cam):
 	if !is_locked:
@@ -100,3 +107,7 @@ func on_Esc(cam):
 	is_locked = !is_locked
 	if cam:
 		is_locked_cam = !is_locked_cam
+
+func reset():
+	was_emit_die = false
+	self.position = Vector3(0,0,0)
