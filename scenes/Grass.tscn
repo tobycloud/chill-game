@@ -13,7 +13,7 @@
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tr5y5"]
 albedo_color = Color(0.407843, 1, 0.329412, 1)
 
-[sub_resource type="Resource" id="Resource_tldws"]
+[sub_resource type="Resource" id="Resource_w4rb6"]
 script = ExtResource("3_tarui")
 amount = 1000
 enabled = true
@@ -22,7 +22,7 @@ custom_seed = 0
 restrict_height = true
 reference_frame = 1
 
-[sub_resource type="Resource" id="Resource_eeeft"]
+[sub_resource type="Resource" id="Resource_vypdm"]
 script = ExtResource("4_h5nc4")
 position = Vector3(0.15, 0.15, 0.15)
 rotation = Vector3(20, 360, 20)
@@ -33,7 +33,7 @@ custom_seed = 0
 restrict_height = false
 reference_frame = 2
 
-[sub_resource type="Resource" id="Resource_d6e6b"]
+[sub_resource type="Resource" id="Resource_s4710"]
 script = ExtResource("5_e0e3o")
 iterations = 3
 offset_step = 0.2
@@ -45,7 +45,7 @@ custom_seed = 0
 restrict_height = true
 reference_frame = 0
 
-[sub_resource type="Resource" id="Resource_oi4we"]
+[sub_resource type="Resource" id="Resource_aph7w"]
 script = ExtResource("6_ni22u")
 ray_direction = Vector3(0, -1, 0)
 ray_length = 5.0
@@ -61,9 +61,9 @@ custom_seed = 0
 restrict_height = false
 reference_frame = 0
 
-[sub_resource type="Resource" id="Resource_gdwig"]
+[sub_resource type="Resource" id="Resource_juqy5"]
 script = ExtResource("2_uenim")
-stack = Array[Resource("res://addons/proton_scatter/src/modifiers/base_modifier.gd")]([SubResource("Resource_tldws"), SubResource("Resource_eeeft"), SubResource("Resource_d6e6b"), SubResource("Resource_oi4we")])
+stack = Array[Resource("res://addons/proton_scatter/src/modifiers/base_modifier.gd")]([SubResource("Resource_w4rb6"), SubResource("Resource_vypdm"), SubResource("Resource_s4710"), SubResource("Resource_aph7w")])
 
 [sub_resource type="Resource" id="Resource_tnfm8"]
 script = ExtResource("9_o2t2w")
@@ -80,7 +80,7 @@ size = Vector3(20, 1, 20)
 [node name="ProtonScatter" type="Node3D" parent="CSGBox3D"]
 transform = Transform3D(3.235, 0, 0, 0, 1, 0, 0, 0, 3.23, 0, 0, 0)
 script = ExtResource("1_1wwee")
-modifier_stack = SubResource("Resource_gdwig")
+modifier_stack = SubResource("Resource_juqy5")
 Performance/use_chunks = true
 Performance/chunk_dimensions = Vector3(15, 15, 15)
 

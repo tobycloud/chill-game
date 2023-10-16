@@ -94,7 +94,6 @@ func _physics_process(delta):
 		move_and_slide()
 signal PlayerDie
 func _process(delta):
-	print(position)
 	if(global_position[1] <=-100) && !was_emit_die:
 		PlayerDie.emit()
 		was_emit_die = true
