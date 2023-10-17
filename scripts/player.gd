@@ -6,7 +6,7 @@ class_name Player
 @onready var camera_mount = $camera_mount
 @onready var animation_player = $visuals/mixamo_base/AnimationPlayer
 @onready var visuals = $visuals
-
+@onready var body = $visuals/mixamo_base/Armature
 @export var sens_horizontal = 0.5
 @export var sens_vertical = 0.5
 
@@ -57,9 +57,15 @@ func _input(event):
 		else:
 			first.current = false
 			third.current = true
+			rotate_y(deg_to_rad(0))
+			rotation.z = 0.0
+			visuals.rotate_y(deg_to_rad(0))
+			rotate_x(0)
+			
 			visuals.show()
 	if event is InputEventMouseMotion:
 		if !is_locked_cam:
+			
 			rotate_y(deg_to_rad(-event.relative.x * sens_horizontal))
 			visuals.rotate_y(deg_to_rad(event.relative.x * sens_horizontal))
 		
@@ -96,8 +102,8 @@ func _physics_process(delta):
 	var input_dir = Input.get_vector("left", "right", "forward", "backward")
 	direction = lerp(
 		direction, 
-		(transform.basis*Vector3(input_dir.x, 0.01, input_dir.y)).normalized(),
-		delta*lerp_spd+sin(deg_to_rad(delta/2))
+		(transform.basis*Vector3(input_dir.x, 0.0, input_dir.y)).normalized(),
+		delta*lerp_spd
 	)
 	if direction:
 		if !is_locked:
@@ -118,14 +124,15 @@ func _physics_process(delta):
 	else:
 		if animation_player.current_animation != "idle":
 			animation_player.play("idle")
-		velocity.x = move_toward(velocity.x, 0, SPEED)
+		velocity.y = move_toward(velocity.x, 0, SPEED)
 		velocity.z = move_toward(velocity.z, 0, SPEED)
 	if !is_locked:
 		move_and_slide()
 signal PlayerDie
 func _process(delta):
-	apply_smooth_rotation(delta)
-	z_shaking(delta)
+	if(first.current == true):
+		apply_smooth_rotation(delta)
+		z_shaking(delta)
 	if(global_position[1] <=-100) && !was_emit_die:
 		PlayerDie.emit()
 		was_emit_die = true
@@ -144,27 +151,28 @@ func reset():
 	self.position = Vector3(0,0,0)
 
 func z_shaking(delta):
-	rotation_speed = clamp(rotation.z, 0.01, 0.05)
-	if is_locked_cam == true:
-		rotation.z = lerp_angle(rotation.z, 0.0, rotation_speed * delta)
-		rotation.z = clamp(rotation.z, deg_to_rad(-2), deg_to_rad(2))
-		current_z_rotation_speed = 0.0
-	else:
-		if target_rotation != prev_target_rotation:
+	if(first.current == true):
+		rotation_speed = clamp(rotation.z, 0.01, 0.05)
+		if is_locked_cam == true:
+			rotation.z = lerp_angle(rotation.z, 0.0, rotation_speed * delta)
+			rotation.z = clamp(rotation.z, deg_to_rad(-2), deg_to_rad(2))
 			current_z_rotation_speed = 0.0
-			rotation.z = 0.0
-		current_z_rotation_speed += (transform.basis*Vector3(direction.x, 0.01, direction.y)).x * z_rotation_speed
-		# if direction.x == 0.0:
-		#	current_z_rotation_speed = lerp(current_z_rotation_speed, 0.01, z_rotation_decay)
-		
-		if (abs(rotation.z) > deg_to_rad(5)) or (abs(rotation.z) < deg_to_rad(-5)):
-			current_z_rotation_speed -= sign(rotation.z) * z_rotation_deceleration * delta
-		current_z_rotation_speed = clamp(current_z_rotation_speed, -max_z_rotation_speed, max_z_rotation_speed)
-		
-		rotation.z += current_z_rotation_speed * delta
-		rotation.z = fmod(rotation.z, (2 * PI))
-		rotation.z = clamp(rotation.z, deg_to_rad(-5), delta*lerp_spd*deg_to_rad(5))
-	prev_target_rotation = target_rotation
+		else:
+			if target_rotation != prev_target_rotation:
+				current_z_rotation_speed = 0.0
+				rotation.z = 0.0
+			current_z_rotation_speed += (transform.basis*Vector3(direction.x, 0.01, direction.y)).x * z_rotation_speed
+			# if direction.x == 0.0:
+			#	current_z_rotation_speed = lerp(current_z_rotation_speed, 0.01, z_rotation_decay)
+			
+			if (abs(rotation.z) > deg_to_rad(5)) or (abs(rotation.z) < deg_to_rad(-5)):
+				current_z_rotation_speed -= sign(rotation.z) * z_rotation_deceleration * delta
+			current_z_rotation_speed = clamp(current_z_rotation_speed, -max_z_rotation_speed, max_z_rotation_speed)
+			
+			rotation.z += current_z_rotation_speed * delta
+			rotation.z = fmod(rotation.z, (2 * PI))
+			rotation.z = clamp(rotation.z, deg_to_rad(-5), delta*lerp_spd*deg_to_rad(5))
+		prev_target_rotation = target_rotation
 func apply_smooth_rotation(delta):
 	if is_locked_cam:
 		rotation.y = 0.0
