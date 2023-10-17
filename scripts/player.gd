@@ -57,6 +57,7 @@ func _input(event):
 		else:
 			first.current = false
 			third.current = true
+			visuals.show()
 	if event is InputEventMouseMotion:
 		if !is_locked_cam:
 			rotate_y(deg_to_rad(-event.relative.x * sens_horizontal))
