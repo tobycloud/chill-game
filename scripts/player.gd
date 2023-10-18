@@ -1,6 +1,8 @@
 extends CharacterBody3D
 class_name Player
 
+const SMOOTH = 10.0
+
 @onready var third = $camera_mount/third
 @onready var first = $camera_mount/first
 @onready var camera_mount = $camera_mount
@@ -20,6 +22,10 @@ var was_emit_die = false
 var lerp_spd = 10.0
 
 var direction = Vector3.ZERO
+var rotation_velocity = Vector3()
+
+var gt_transform: Transform3D
+var gt_current: Transform3D
 
 @export var walking_speed = 3
 @export var running_speed = 5
@@ -60,6 +66,8 @@ var original_head_bob_amount = head_bob_amount
 var prev_velocity = 0.0
 
 func _ready():
+	set_as_top_level(true)
+	
 	if animation_player.current_animation != "idle":
 		animation_player.play("idle")
 	original_camera_position = camera_mount.position
@@ -67,7 +75,6 @@ func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	
 	
-
 func _input(event):
 	if Input.is_action_just_pressed("switch_cam"):
 		if third.current:
@@ -126,6 +133,11 @@ func _physics_process(delta):
 		(transform.basis*Vector3(input_dir.x, 0.0, input_dir.y)).normalized(),
 		delta*lerp_spd
 	)
+	rotation_velocity = rotation_velocity.lerp(camera_mount.rotation, delta*SMOOTH)
+		
+	camera_mount.rotation.y = rotation_velocity.y
+	camera_mount.rotation.x = lerp(camera_mount.rotation.x, camera_mount.rotation.x, delta*SMOOTH)
+	
 	if direction:
 		if !is_locked:
 			# camera_mount.position.x 
@@ -150,7 +162,10 @@ func _physics_process(delta):
 		
 		velocity.x = direction.x * SPEED
 		velocity.z = direction.z * SPEED
-			
+		
+		
+		# camera_mount.rotation.y = lerp(float(camera_mount.rotation.y), 0.0, float(delta*SMOOTH))
+		# camera_mount.rotation.x = lerp(float(camera_mount.rotation.x), 0.0, float(delta*SMOOTH))
 	else:
 		if animation_player.current_animation != "idle":
 			animation_player.play("idle")
@@ -231,9 +246,9 @@ func apply_smooth_rotation(delta):
 	if is_locked_cam:
 		rotation.y = 0.0
 	else:
-		rotation.y = lerp_angle(rotation.y, target_rotation.y, rotation_speed * delta)
+		rotation.y = smooth_angle(rotation.y, target_rotation.y, rotation_speed * delta)
 	
-func lerp_angle(a, b, t):
+func smooth_angle(a, b, t):
 	var result = a + (b - a) * t
 	if abs(b - a) > PI:
 		result += PI * 2 if (b < a) else -PI * 2
