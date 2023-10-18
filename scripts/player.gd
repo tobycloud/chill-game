@@ -40,20 +40,40 @@ var z_rotation_acceleration = 0
 var max_z_rotation_speed = 0.5
 var current_z_rotation_speed = 0.0
 var locked = false
-
+var head_bob_timer = 0.0
+var head_bob_amount = 0.1
+var lateral_bob_amount = 0.05
+var lateral_bob_speed = 12.0
+var stabilization_speed = 5.0
 var prev_target_rotation = Vector2()
+var head_bob_speed = 10.0
+var lateral_bob_timer = 0.0
+var original_camera_position = Vector3()
+var rotation_bob_amount = 0.02
+var rotation_bob_speed = 15.0
+var rotation_bob_timer = 0.0
+
+var original_lateral_bob_amount = lateral_bob_amount
+var original_rotation_bob_amount = rotation_bob_amount
+var original_head_bob_amount = head_bob_amount
+
+var prev_velocity = 0.0
 
 func _ready():
 	if animation_player.current_animation != "idle":
 		animation_player.play("idle")
+	original_camera_position = camera_mount.position
+	
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	model.visible = false
+	
+	
 
 func _input(event):
 	if Input.is_action_just_pressed("switch_cam"):
 		if third.current:
 			first.current = true
 			third.current = false
+			model.visible = false
 		else:
 			first.current = false
 			third.current = true
@@ -81,6 +101,7 @@ func _input(event):
 func _physics_process(delta):
 	
 	if Input.is_action_pressed("run"):
+		
 		SPEED = running_speed
 		running = true
 	else:
@@ -107,32 +128,64 @@ func _physics_process(delta):
 	)
 	if direction:
 		if !is_locked:
+			# camera_mount.position.x 
 			if running:
+				head_bob_amount = original_head_bob_amount + 0.3
+				
 				if animation_player.current_animation != "running":
 					animation_player.play("running")
 			else:
+				lateral_bob_amount = original_lateral_bob_amount
+				head_bob_amount = original_head_bob_amount
+				rotation_bob_amount = original_rotation_bob_amount
 				if animation_player.current_animation != "walking":
+					
+					
 					animation_player.play("walking");
 			visuals.look_at(position + direction)
 		else:
 			if animation_player.current_animation != "idle":
 					animation_player.play("idle")
-
+		
 		
 		velocity.x = direction.x * SPEED
 		velocity.z = direction.z * SPEED
+			
 	else:
 		if animation_player.current_animation != "idle":
 			animation_player.play("idle")
 		velocity.y = move_toward(velocity.x, 0, SPEED)
 		velocity.z = move_toward(velocity.z, 0, SPEED)
+		
 	if !is_locked:
+		
 		move_and_slide()
 signal PlayerDie
 func _process(delta):
 	if(first.current == true):
+		if(velocity.length() > prev_velocity):
+			head_bob_timer += delta * head_bob_speed
+			lateral_bob_timer += delta * lateral_bob_speed
+			rotation_bob_timer += delta * rotation_bob_speed
+			
+			var bob_offset = Vector3(
+				abs(sin(lateral_bob_timer)) * lateral_bob_amount,
+				abs(cos(head_bob_timer)) * head_bob_amount,
+				sin(rotation_bob_timer) * rotation_bob_amount
+			)
+			camera_mount.position = original_camera_position.lerp(
+				original_camera_position + bob_offset.lerp(bob_offset, 0.4), 
+				0.458
+			)
+			prev_velocity = velocity.length()
+		else:
+			prev_velocity = velocity.length()
+			camera_mount.position = camera_mount.position.lerp(original_camera_position, delta * stabilization_speed)
+			
+		model.visible = false
 		apply_smooth_rotation(delta)
 		z_shaking(delta)
+		
 	if(global_position[1] <=-100) && !was_emit_die:
 		PlayerDie.emit()
 		was_emit_die = true
@@ -173,6 +226,7 @@ func z_shaking(delta):
 			rotation.z = fmod(rotation.z, (2 * PI))
 			rotation.z = clamp(rotation.z, deg_to_rad(-5), delta*lerp_spd*deg_to_rad(5))
 		prev_target_rotation = target_rotation
+
 func apply_smooth_rotation(delta):
 	if is_locked_cam:
 		rotation.y = 0.0
