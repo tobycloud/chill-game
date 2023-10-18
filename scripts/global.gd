@@ -2,6 +2,7 @@ extends Node
 
 
 func _ready():
+	get_tree().root.use_occlusion_culling = true
 	discord_sdk.app_id = 890871180268023829 # Application ID
 	discord_sdk.details = "A demo activity by vaporvee"
 	discord_sdk.state = "Checkpoint 23/23"
@@ -17,6 +18,3 @@ func _ready():
 	discord_sdk.refresh() # Always refresh after changing the values!
 	
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
