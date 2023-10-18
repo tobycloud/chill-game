@@ -133,7 +133,7 @@ environment = SubResource("Environment_u1wmn")
 [node name="EscUserOption" parent="." groups=["defaultHide"] instance=ExtResource("5_7l732")]
 visible = false
 
-[node name="PlayerDiePanel" parent="." groups=["panel"] instance=ExtResource("8_auuq0")]
+[node name="PlayerDiePanel" parent="." groups=["defaultHide"] instance=ExtResource("8_auuq0")]
 visible = false
 
 [connection signal="PlayerDie" from="player" to="." method="_on_player_player_die"]

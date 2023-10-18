@@ -15,6 +15,8 @@ func _input(_event):
 			esc_user_option.show()
 		else:
 			esc_user_option.hide()
+			for i in panels:
+				i.hide()
 		EscMenu = !EscMenu
 
 func hide_show_all_child():
@@ -30,7 +32,8 @@ func hide_show_all_child():
 func _on_esc_user_option_rtp(node):
 	player.on_Esc(true)
 	hide_show_all_child()
-	node.hide()
+	for i in panels:
+		i.hide()
 	EscMenu = !EscMenu
 
 func _on_player_die_panel_respawn(node):
