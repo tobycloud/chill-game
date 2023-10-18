@@ -7,7 +7,7 @@ var hiddenChild = []
 func _ready():
 	panels = get_tree().get_nodes_in_group("defaultHide")
 
-func _input(event):
+func _input(_event):
 	if Input.is_action_just_pressed("esc"):
 		player.on_Esc(true)
 		hide_show_all_child()

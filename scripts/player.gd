@@ -88,7 +88,6 @@ func _input(event):
 			rotation.z = 0.0
 			visuals.rotate_y(deg_to_rad(0))
 			rotate_x(0)
-			
 			visuals.show()
 	if event is InputEventMouseMotion:
 		if !is_locked_cam:
@@ -154,7 +153,8 @@ func _physics_process(delta):
 					
 					
 					animation_player.play("walking");
-			visuals.look_at(position + direction)
+			if !global_transform.origin.is_equal_approx(position + direction):
+				visuals.look_at(position + direction)
 		else:
 			if animation_player.current_animation != "idle":
 					animation_player.play("idle")
@@ -173,8 +173,8 @@ func _physics_process(delta):
 		velocity.z = move_toward(velocity.z, 0, SPEED)
 		
 	if !is_locked:
-		
 		move_and_slide()
+		
 signal PlayerDie
 func _process(delta):
 	if(first.current == true):
