@@ -8,6 +8,7 @@ const SMOOTH = 10.0
 @onready var camera_mount = $camera_mount
 @onready var animation_player = $visuals/mixamo_base/AnimationPlayer
 @onready var visuals = $visuals
+@onready var vfx = $TextureRect
 @onready var body = $visuals/mixamo_base/Armature
 @export var sens_horizontal = 0.5
 @export var sens_vertical = 0.5
@@ -27,8 +28,8 @@ var rotation_velocity = Vector3()
 var gt_transform: Transform3D
 var gt_current: Transform3D
 
-@export var walking_speed = 3
-@export var running_speed = 5
+@export var walking_speed = 4
+@export var running_speed = 7
 
 @export_category("Nodes")
 @export_node_path("Node3D") var node_path
@@ -58,13 +59,14 @@ var original_camera_position = Vector3()
 var rotation_bob_amount = 0.02
 var rotation_bob_speed = 15.0
 var rotation_bob_timer = 0.0
-
+var energy = 40.0
 var original_lateral_bob_amount = lateral_bob_amount
 var original_rotation_bob_amount = rotation_bob_amount
 var original_head_bob_amount = head_bob_amount
 
 var prev_velocity = 0.0
 
+@onready var shader_value = vfx.material.get("shader_parameter/force")
 func _ready():
 	set_as_top_level(true)
 	
@@ -105,13 +107,37 @@ func _input(event):
 
 
 func _physics_process(delta):
-	
+	if(energy>=0.0 and energy<=40.0):
+		energy+=0.2;
 	if Input.is_action_pressed("run"):
-		
-		SPEED = running_speed
+		if(SPEED <= running_speed and energy >= 10.0):
+			SPEED += 2.5
+		if(energy>=0.0):
+			energy-=0.2;
+		if(energy <= 3.6):
+			if(SPEED>=2.5):
+				SPEED-=0.5
+			lateral_bob_amount = 0.0
+			head_bob_amount = 0.0
+			rotation_bob_amount = 0.0
+			if(shader_value <= 0.3):
+				shader_value+=0.01
+				
+				vfx.material.set("shader_parameter/force", shader_value)
+		else:
+			if(SPEED <= running_speed):
+				SPEED+=0.5
 		running = true
 	else:
-		SPEED = walking_speed
+		
+		if(shader_value >= 0):
+			if(energy<=2.0):
+				shader_value-=0.002
+			else:
+				shader_value-=0.01
+			vfx.material.set("shader_parameter/force", shader_value)
+		if(energy <= 5.5 and SPEED <= walking_speed):
+			SPEED += 0.01
 		running = false
 	
 	# Add the gravity.
@@ -220,10 +246,10 @@ func reset():
 
 func z_shaking(delta):
 	if(first.current == true):
-		rotation_speed = clamp(rotation.z, 0.01, 0.05)
+		rotation_speed = clamp(rotation.z, 0.00, 0.05)
 		if is_locked_cam == true:
 			rotation.z = lerp_angle(rotation.z, 0.0, rotation_speed * delta)
-			rotation.z = clamp(rotation.z, deg_to_rad(-2), deg_to_rad(2))
+			rotation.z = clamp(rotation.z, deg_to_rad(0), deg_to_rad(5))
 			current_z_rotation_speed = 0.0
 		else:
 			if target_rotation != prev_target_rotation:
@@ -239,7 +265,7 @@ func z_shaking(delta):
 			
 			rotation.z += current_z_rotation_speed * delta
 			rotation.z = fmod(rotation.z, (2 * PI))
-			rotation.z = clamp(rotation.z, deg_to_rad(-5), delta*lerp_spd*deg_to_rad(5))
+			rotation.z = clamp(rotation.z, deg_to_rad(0), delta*lerp_spd*deg_to_rad(10))
 		prev_target_rotation = target_rotation
 
 func apply_smooth_rotation(delta):
