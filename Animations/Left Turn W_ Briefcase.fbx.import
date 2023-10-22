@@ -3,13 +3,13 @@
 importer="animation_library"
 importer_version=1
 type="AnimationLibrary"
-uid="uid://c0d54dd0tfnln"
-path="res://.godot/imported/Running.fbx-084601972c9e752968268ae28c2e4436.res"
+uid="uid://crn7wg1yxn6kp"
+path="res://.godot/imported/Left Turn W_ Briefcase.fbx-345a5ea29a4c56bd9e4d5c6b0d7675f3.res"
 
 [deps]
 
-source_file="res://Animations/Running.fbx"
-dest_files=["res://.godot/imported/Running.fbx-084601972c9e752968268ae28c2e4436.res"]
+source_file="res://Animations/Left Turn W_ Briefcase.fbx"
+dest_files=["res://.godot/imported/Left Turn W_ Briefcase.fbx-345a5ea29a4c56bd9e4d5c6b0d7675f3.res"]
 
 [params]
 

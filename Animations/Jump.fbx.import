@@ -3,13 +3,13 @@
 importer="animation_library"
 importer_version=1
 type="AnimationLibrary"
-uid="uid://c0d54dd0tfnln"
-path="res://.godot/imported/Running.fbx-084601972c9e752968268ae28c2e4436.res"
+uid="uid://dwwy08n40wkct"
+path="res://.godot/imported/Jump.fbx-aff486602f09090a29c6d9589e69b32f.res"
 
 [deps]
 
-source_file="res://Animations/Running.fbx"
-dest_files=["res://.godot/imported/Running.fbx-084601972c9e752968268ae28c2e4436.res"]
+source_file="res://Animations/Jump.fbx"
+dest_files=["res://.godot/imported/Jump.fbx-aff486602f09090a29c6d9589e69b32f.res"]
 
 [params]
 

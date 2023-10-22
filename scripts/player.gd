@@ -6,10 +6,9 @@ const SMOOTH = 10.0
 @onready var third = $camera_mount/third
 @onready var first = $camera_mount/first
 @onready var camera_mount = $camera_mount
-@onready var animation_player = $visuals/mixamo_base/AnimationPlayer
+@onready var animation_player = $visuals/AnimationTree
 @onready var visuals = $visuals
 @onready var vfx = $TextureRect
-@onready var body = $visuals/mixamo_base/Armature
 @export var sens_horizontal = 0.5
 @export var sens_vertical = 0.5
 
@@ -33,9 +32,10 @@ var gt_current: Transform3D
 
 @export_category("Nodes")
 @export_node_path("Node3D") var node_path
+@export_node_path("MeshInstance3D") var FirstShowNode
 
-@onready var model = get_node(node_path) as Node3D
-
+@onready var models = get_node(node_path).get_children() as Array[Node3D]
+@onready var first_show_node = get_node(FirstShowNode) as MeshInstance3D
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var target_rotation = Vector2()
@@ -69,9 +69,6 @@ var prev_velocity = 0.0
 @onready var shader_value = vfx.material.get("shader_parameter/force")
 func _ready():
 	set_as_top_level(true)
-	
-	if animation_player.current_animation != "idle":
-		animation_player.play("idle")
 	original_camera_position = camera_mount.position
 	
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -82,7 +79,10 @@ func _input(event):
 		if third.current:
 			first.current = true
 			third.current = false
-			model.visible = false
+			for model in models:
+				if model.name == "Body (Headless)":
+					continue
+				model.visible = false
 		else:
 			first.current = false
 			third.current = true
@@ -90,7 +90,8 @@ func _input(event):
 			rotation.z = 0.0
 			visuals.rotate_y(deg_to_rad(0))
 			rotate_x(0)
-			visuals.show()
+			for model in models:
+				model.visible = true
 	if event is InputEventMouseMotion:
 		if !is_locked_cam:
 			
@@ -147,6 +148,7 @@ func _physics_process(delta):
 	# Handle Jump.
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
+		animation_player.set("parameters/OneShot/active",true)
 		if running:
 			velocity.y += 2 # extra velocity if running
 
@@ -168,22 +170,12 @@ func _physics_process(delta):
 			# camera_mount.position.x 
 			if running:
 				head_bob_amount = original_head_bob_amount + 0.3
-				
-				if animation_player.current_animation != "running":
-					animation_player.play("running")
 			else:
 				lateral_bob_amount = original_lateral_bob_amount
 				head_bob_amount = original_head_bob_amount
 				rotation_bob_amount = original_rotation_bob_amount
-				if animation_player.current_animation != "walking":
-					
-					
-					animation_player.play("walking");
 			if !global_transform.origin.is_equal_approx(position + direction):
 				visuals.look_at(position + direction)
-		else:
-			if animation_player.current_animation != "idle":
-					animation_player.play("idle")
 		
 		
 		velocity.x = direction.x * SPEED
@@ -193,8 +185,6 @@ func _physics_process(delta):
 		# camera_mount.rotation.y = lerp(float(camera_mount.rotation.y), 0.0, float(delta*SMOOTH))
 		# camera_mount.rotation.x = lerp(float(camera_mount.rotation.x), 0.0, float(delta*SMOOTH))
 	else:
-		if animation_player.current_animation != "idle":
-			animation_player.play("idle")
 		velocity.y = move_toward(velocity.x, 0, SPEED)
 		velocity.z = move_toward(velocity.z, 0, SPEED)
 		
@@ -222,8 +212,8 @@ func _process(delta):
 		else:
 			prev_velocity = velocity.length()
 			camera_mount.position = camera_mount.position.lerp(original_camera_position, delta * stabilization_speed)
-			
-		model.visible = false
+		#for model in models:
+		#	model.visible = false
 		apply_smooth_rotation(delta)
 		z_shaking(delta)
 		

@@ -19,6 +19,8 @@ func _input(_event):
 				i.hide()
 		EscMenu = !EscMenu
 
+
+
 func hide_show_all_child():
 	for child in get_children():
 		if child is WorldEnvironment:
